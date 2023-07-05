@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<%- include('../partials/head-style'); %>
+</head>
+
+<body>
+	<%- include('../partials/top-header'); %>
+		<%- include('../partials/sidebar'); %>
+
+			<div class="main-container">
+				<div class="pd-ltr-20 xs-pd-20-10">
+					<div class="min-height-200px">
+						<div class="page-header">
+							<div class="row">
+								<div class="col-md-6 col-sm-12">
+									<div class="title">
+										<h4>Send Notification Detail</h4>
+									</div>
+									<nav aria-label="breadcrumb" role="navigation">
+										<ol class="breadcrumb">
+											<li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+											<li class="breadcrumb-item active" aria-current="page">Send Notification Detail</li>
+										</ol>
+									</nav>
+								</div>
+							</div>
+						</div>
+						<!-- Checkbox select Datatable start -->
+						<div class="card-box mb-30 pd-20">
+							<div class="pb-20">
+								<table class="table nowrap">
+									<thead>
+										<tr>
+											
+											<th>Notification Id</th>
+											<th>Title</th>
+											<th>Notification</th>
+											<th>Date</th>
+											<th>Action</th>
+										</tr>
+									</thead>
+									<tbody>
+										<% for(var i=0; i<userData.length; i++) {%>
+											<tr>
+												
+												<td>
+													<%= userData[i].id %>
+												</td>
+												<td>
+													<%= userData[i].title%>
+												</td>
+												<td>
+													<%= userData[i].notification%>
+												</td>
+												<td>
+													<% var day=userData[i].createdAt; %>  <%= day.toDateString("en-US") ; %> <%= day.toLocaleTimeString("en-US") ; %> 
+												</td>
+												<td>
+										
+													<% if(uri.includes('pointprecise-notification-detail')===true){ %>
+														<a href="/pointprecise-notificatiomaster/<%= userData[i].id %>"
+															class="btn btn-outline-primary">View Detail</a>
+														<% } else if (uri.includes('scanamaze-notification-detail')===true) { %>
+															<a href="/scanamaze-notificatiomaster/<%= userData[i].id %>"
+																class="btn btn-outline-primary">View Detail
+															</a>
+															<% } %>
+												</td>
+											</tr>
+											<% } %>
+									</tbody>
+								</table>
+							</div>
+						</div>
+						<!-- Checkbox select Datatable End -->
+					</div>
+					<div class="footer-wrap pd-20 mb-20 card-box">
+						URC Monitoring
+						<a href="javascript:;" target="_blank">Tycho Technologies Pvt. Ltd.</a>
+					</div>
+				</div>
+			</div>
+			<%- include('../partials/footer'); %>
+</body>
+
+</html>

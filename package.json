@@ -1,0 +1,42 @@
+{
+  "name": "deskapp-node",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.165.0",
+    "aws-config": "^1.4.0",
+    "aws-sdk": "^2.1210.0",
+    "bcryptjs": "^2.4.3",
+    "childprocess": "^2.0.2",
+    "dotenv": "^16.0.1",
+    "ejs": "^3.1.8",
+    "express": "^4.18.1",
+    "express-flash": "^0.0.2",
+    "express-session": "^1.17.3",
+    "express-validator": "^6.14.2",
+    "fcm-node": "^1.6.1",
+    "fs": "^0.0.1-security",
+    "join": "^3.0.0",
+    "jsonwebtoken": "^8.5.1",
+    "method-override": "^3.0.0",
+    "mysql": "^2.18.1",
+    "mysql2": "^2.3.3",
+    "nodemailer": "^6.7.8",
+    "nodemon": "^2.0.19",
+    "passport": "^0.6.0",
+    "passport-local": "^1.0.0",
+    "s3-zip": "^3.2.1",
+    "sequelize": "^6.22.0",
+    "sqlite3": "^5.0.11",
+    "util": "^0.12.4"
+  }
+}

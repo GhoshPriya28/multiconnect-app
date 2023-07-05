@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<%- include('../partials/head-style'); %>
+</head>
+
+<body>
+	<%- include('../partials/top-header'); %>
+		<%- include('../partials/sidebar'); %>
+		<script src="/javascripts/stislas.js"></script>
+    <script src="/javascripts/scriptsdata.js"></script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sweetalert2@11.3.2/dist/sweetalert2.all.min.js"></script>
+
+			<div class="main-container">
+				<div class="pd-ltr-20 xs-pd-20-10">
+					<div class="min-height-200px">
+						<div class="page-header">
+							<div class="row">
+								<div class="col-md-12 col-sm-12">
+									<div class="title">
+										<h4>Send Notification</h4>
+									</div>
+									<form method="post" id="sendNotification" action="/send-notification"
+											class="needs-validation" novalidate="">
+									<nav aria-label="breadcrumb" role="navigation">
+										<ol class="breadcrumb">
+											<li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+											<li class="breadcrumb-item active" aria-current="page">Send Notification
+											</li>
+										</ol><br>
+											<div class="form-group">
+												<div class="col">
+													<input type="hidden" class="form-control" required name="user_ids"
+														id="user_ids" value="">
+														<% if(uri.includes('scanamaze-notification')===true)
+														{ %>
+															<input type="hidden" id="platformName" name="platformName" value="/scanamaze-notification"/>	
+															<% } else if(uri.includes('pointprecise-notification')===true)
+															{ %>
+															  <input type="hidden" id="platformName" name="platformName" value="/pointprecise-notification"/>	
+														<% } %>	
+													
+													<input type="text" class="form-control" required name="title"
+														id="title" placeholder="Title: Subject Line">
+												</div><br>
+												<div class="col">
+													<label for="comment">Description:</label>
+													<textarea class="form-control" rows="5" required name="comment"
+														id="comment" style="
+														height: 52px;
+													"></textarea>
+														
+												</div>
+											</div><br>
+											<div class="form-group col-md-6 col-6">
+												<button type="submit" id="formid" class="btn btn-primary"
+													style="position: absolute;right: -473px;top: -26px;"> Send
+													Notification
+												</button>
+											</div>
+										
+								</div>
+
+							</div>
+						</div>
+						<!-- Checkbox select Datatable start -->
+						<div class="card-box mb-30 pd-20">
+							<div class="pb-20">
+								<table class="checkbox-datatable table nowrap">
+									<thead>
+										<tr>
+											<th>
+												<div class="dt-checkbox">
+													<input type="checkbox" name="select_all" value="1"
+														id="example-select-all" />
+													<span class="dt-checkbox-label"></span>
+												</div>
+											</th>
+											<th>User Id</th>
+											<th>First Name</th>
+											<th>Last Name</th>
+											<th>Email</th>
+											<!--<th>Status</th>-->
+											<th>Last Send Time</th>
+										</tr>
+									</thead>
+									<tbody>
+										<% for(var i=0; i<userData.length; i++) {%>
+											<tr>
+												<td><%= userData[i].id %></td>
+												<td>
+													<%= userData[i].id %>
+												</td>
+												<td>
+													<%= userData[i].first_name%>
+												</td>
+												<td>
+													<%= userData[i].last_name%>
+												</td>
+												<td>
+													<%= userData[i].email%>
+												</td>
+												<!--
+												<td>
+													<% if(userData[i].sent) { %>
+														<span class="badge badge-pill badge-success">Sent</span>
+														<% } else { %>
+															<span class="badge badge-pill badge-danger">Not Sent</span>
+															<% } %>
+												</td>-->
+												<td>
+													<% if(userData[i].sent_time) { %>
+														<%= timestamp.getFormatTime(userData[i].sent_time)%>
+															<% } else { }%>
+												</td>
+											</tr>
+											<% } %>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					
+						<!-- Checkbox select Datatable End -->
+					</div>
+					<div class="footer-wrap pd-20 mb-20 card-box">
+						URC Monitoring
+						<a href="javascript:;" target="_blank">Tycho Technologies Pvt. Ltd.</a>
+					</div>
+				</div>
+			</div>
+		
+			<%- include('../partials/footer'); %>
+		</form>
+</body>
+
+</html>
+<script type="text/javascript">
+	
+	$(document).ready(function () {
+		var checked = [];
+		$(document).on('change',':checkbox',function(e){
+			var idd=$('#user_ids').val();
+			$("input[name='id[]']:checked").each(function ()
+			{
+				if(!checked.includes(parseInt($(this).val())))
+                    checked.push(parseInt($(this).val()));
+			});
+			$('#user_ids').val(checked);
+		});
+		$("#example-select-all").click(function (event) {
+			event.stopPropagation()
+			$('input:checkbox').not(this).prop('checked', this.checked);
+		});
+		$("#sendNotification").submit(function (e) {
+           
+			var boxes=$("input[name='id[]']:checked");
+			var checked = []
+			$("input[name='id[]']:checked").each(function ()
+			{
+				checked.push(parseInt($(this).val()));
+			});
+			if ($("#comment").val() == "") {
+                Swal.fire({
+                  icon: 'error',
+                  title: `Sorry can't send notification`,
+                  text: 'Please enter description !!',
+                })
+                return false;
+              }
+			if ($("#title").val() == "") {
+				Swal.fire({
+					icon: 'error',
+					title: `Sorry can't send notification`,
+					text: 'Please enter title !!',
+				})
+				return false;
+			}
+			if (($("#title").val() == "") || ($("#comment").val() == "")) {
+				Swal.fire({
+					icon: 'error',
+					title: `Sorry can't send notification`,
+					text: 'Please fill the required fields !!',
+				})
+				return false;
+			}
+			if (boxes.length == 0) {
+				Swal.fire({
+					icon: 'error',
+					title: `Sorry can't send notification`,
+					text: 'Please select checkbox!!',
+				})
+				return false;
+			}
+			e.preventDefault();
+			Swal.fire({
+				title: 'Do you want to send notification?',
+				showDenyButton: false,
+				showCancelButton: true,
+				confirmButtonText: 'Send',
+				denyButtonText: `Don't send`,
+			}).then((result) => {
+				if (result.isConfirmed) {
+					var form = $(this);
+					var url = form.attr('action');
+					console.log(form.serialize());
+					$.ajax({
+						type: "POST",
+						url: url,
+						data: form.serialize(),
+						success: function (data) {
+							Swal.fire({
+								icon: 'success',
+								title: '',
+								text: 'Submission Successful',
+							});
+							location.reload();
+						}
+					});
+				} else if (result.isDenied) {
+					Swal.fire('Changes are not saved', '', 'info')
+				}
+			});
+		});
+	})
+</script>

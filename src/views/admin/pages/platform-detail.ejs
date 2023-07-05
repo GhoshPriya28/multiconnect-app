@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<%- include('../partials/head-style'); %>
+</head>
+
+<body>
+	<%- include('../partials/top-header'); %>
+		<%- include('../partials/sidebar'); %>
+
+			<div class="main-container">
+				<div class="pd-ltr-20 xs-pd-20-10">
+					<div class="min-height-200px">
+						<div class="page-header">
+							<div class="row">
+								<div class="col-md-6 col-sm-12">
+									<div class="title">
+										<h4>Platform Detail</h4>
+									</div>
+									<nav aria-label="breadcrumb" role="navigation">
+										<ol class="breadcrumb">
+											<li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+											<li class="breadcrumb-item active" aria-current="page">Platform Detail</li>
+										</ol>
+									</nav>
+								</div>
+							</div>
+						</div>
+						<!-- Checkbox select Datatable start -->
+						<div class="card-box mb-30 pd-20">
+							<div class="pb-20">
+								<table class="checkbox-datatable table nowrap">
+									<thead>
+										<tr>
+											<th>
+												<div class="dt-checkbox">
+													<input type="checkbox" name="select_all" value="1"
+														id="example-select-all" />
+													<span class="dt-checkbox-label"></span>
+												</div>
+											</th>
+											<th>Initiate Id</th>
+											<th>Scan Name</th>
+											<th>Scan Time</th>
+											<th>Scan Health</th>
+											<th>Status</th>
+											<th>Status (Everypoint)</th>
+											<th>Job Id</th>
+											<th>Action</th>
+										</tr>
+									</thead>
+									<tbody>
+										<% for(var i=0; i<scanData.length; i++) {%>
+											<tr>
+												<td></td>
+												<td>
+													<%= scanData[i].initiate_id %>
+												</td>
+												<td><a href="javascript:;">
+														<%= scanData[i].collect_name %>
+													</a></td>
+												<td>
+													<%= timestamp.getFormatTime(scanData[i].createdAt)%>
+												</td>
+												<td><span class="badge badge-pill badge-success">Healthy</span></td>
+												<td><span
+														class="badge badge-pill <%= getStatus.badgeColorByStatus(scanData[i].internal_status)%>">
+														<%= getStatus.status(scanData[i].internal_status)%>
+													</span></td>
+												<td><span class="badge badge-pill badge-info">Pending</span></td>
+												<td>
+													<%= scanData[i].ep_collect_id%>
+												</td>
+
+												<td>
+															<% if (uri.includes('platform-detail-scanamaze')===true) { %>
+																<button type="button"
+																	id="<%= scanData[i].initiate_id %>"
+																	class="btn btn-outline-primary enable_reupload"
+																	value="scanamaze" name="reupload"
+																	data-id="<%= scanData[i].initiate_id %>">Activate
+																	Reupload</button>
+																<% } else if (uri.includes('platform-detail-pointprecise')===true) { %>
+																	<button type="button"
+																		id="<%= scanData[i].initiate_id %>"
+																		class="btn btn-outline-primary enable_reupload"
+																		value="pointprecise" name="reupload"
+																		data-id="<%= scanData[i].initiate_id %>">Activate
+																		Reupload</button>
+																	<% } %>
+																		<% if
+																			(uri.includes('platform-detail-scanamaze')===true)
+																			{ %>
+																			<button type="button"
+																				id="<%= scanData[i].initiate_id %>"
+																				class="btn btn-outline-primary download_asset"
+																				value="scanamaze" data-id="<%= scanData[i].initiate_id %>"
+																				name="Asset">Download
+																				Assets</button>
+																			<% } else if (
+																				uri.includes('platform-detail-pointprecise')===true)
+																				{ %>
+																				<button type="button"
+																					class="btn btn-outline-primary download_asset"
+																					value="pointprecise"
+																					data-id="<%= scanData[i].initiate_id %>"
+																					name="Asset">Download
+																					Assets</button>
+																				<% } %>
+
+																					<% if
+																						(uri.includes('platform-detail-scanamaze')===true)
+																						{ %>
+																						<button type="button"
+																							id="<%= scanData[i].initiate_id %>"
+																							class="btn btn-outline-primary download3d_asset"
+																							value="scanamaze"
+																							data-id="<%= scanData[i].initiate_id %>"
+																							name="3d_object">Download 3D
+																							Object</a>
+																							<% } else if
+																								(uri.includes('platform-detail-pointprecise')===true)
+																								{ %>
+																								<button type="button"
+																									class="btn btn-outline-primary download3d_asset"
+																									value="pointprecise"
+																									data-id="<%= scanData[i].initiate_id %>"
+																									name="3d_object">Download
+																									3D
+																									Object</button>
+																								<% } %>
+												</td>
+											</tr>
+											<% } %>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+					<div class="footer-wrap pd-20 mb-20 card-box">
+						URC Monitoring
+						<a href="javascript:;" target="_blank">Tycho Technologies Pvt. Ltd.</a>
+					</div>
+				</div>
+			</div>
+			<%- include('../partials/footer'); %>
+</body>
+
+</html>
+<script type="text/javascript">
+	$(document).ready(function () {
+		$(document).on('click', '.download_asset', function () {
+			var platformName = $(this).val();
+			var initiate_id = $(this).attr('data-id');
+			var name = $(this).attr('name')
+			var id = $(this).attr('id');
+			$(this).text("Processing....");
+			$(this).prop('disabled', true);
+			if (platformName === 'scanamaze') {
+				const url = "/downloadAssets-scanamaze?initiate_id=" + initiate_id + "&platformName=" + platformName + "&name=" + name;
+				$.ajax({
+					url: url,
+					context: document.body,
+					success: function (response) {
+						if (response.code == 200) {
+							var path = response.data.path;
+							window.location.href = path;
+							$('.download_asset').text("Download Assets");
+							$('.download_asset').prop('disabled', false);
+						}
+					}
+				});
+			}
+			else if (platformName === 'pointprecise') {
+				const url = "/downloadAssets-pointpre?initiate_id=" + initiate_id + "&platformName=" + platformName + "&name=" + name;
+				$.ajax({
+					url: url,
+					context: document.body,
+					success: function (response) {
+						if (response.code == 200) {
+							var path = response.data.path;
+							window.location.href = path;
+							$('.download_asset').text("Download Assets");
+							$('.download_asset').prop('disabled', false);
+						}
+					}
+				});
+			}
+		});
+
+		$(document).on('click', '.download3d_asset', function () {
+			var platformName = $(this).val();
+			var initiate_id = $(this).attr('data-id');
+			var id = $(this).attr('id');
+			var name = $(this).attr('name')
+			$(this).text("Processing....");
+			$(this).prop('disabled', true);
+			if (platformName === 'scanamaze') {
+				const url = "/downloadAssets-scanamaze?initiate_id=" + initiate_id + "&platformName=" + platformName + "&name=" + name;
+				$.ajax({
+					url: url,
+					context: document.body,
+					success: function (response) {
+						if (response.code == 200) {
+							var path = response.data.path;
+							window.location.href = path;
+							$('.download3d_asset').text("Download 3D Assets");
+							$('.download3d_asset').prop('disabled', false);
+						}
+					}
+				});
+			}
+			else if (platformName === 'pointprecise') {
+				const url = "/downloadAssets-pointpre?initiate_id=" + initiate_id + "&platformName=" + platformName + "&name=" + name;
+				$.ajax({
+					url: url,
+					context: document.body,
+					success: function (response) {
+						if (response.code == 200) {
+							var path = response.data.path;
+							window.location.href = path;
+							$('.download3d_asset').text("Download 3D Assets");
+							$('.download3d_asset').prop('disabled', false);
+						}
+					}
+				});
+			}
+		});
+
+		$(document).on('click', '.enable_reupload', function () {
+			var platformName = $(this).val();
+			var initiate_id = $(this).attr('data-id');
+			var id = $(this).attr('id');
+			var name = $(this).attr('name');
+			$(this).prop('disabled', true);
+			if (platformName === 'pointprecise') {
+				const url = "/reupload-pointpre?initiate_id=" + initiate_id + "&platformName=" + platformName + "&name=" + name;
+				$.ajax({
+					url: url,
+					context: document.body,
+					success: function (response) {
+						if (response.code == 200) {
+							$('.enable_reupload').prop('disabled', false);
+
+						}
+						alert(response.message);
+					}
+				});
+			}
+			else if (platformName === 'scanamaze') {
+				const url = "/reupload-scanamaze?initiate_id=" + initiate_id + "&platformName=" + platformName + "&name=" + name;
+				$.ajax({
+					url: url,
+					context: document.body,
+					success: function (response) {
+						if (response.code == 200) {
+							$('.enable_reupload').prop('disabled', false);
+
+						}
+						alert(response.message);
+					}
+				});
+			}
+		})
+	})
+</script>
